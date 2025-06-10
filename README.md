@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🧠 Web3 Transfer Logs Indexer
 
-## Getting Started
+A fullstack Ethereum event indexer built using **Next.js (App Router)**, **Ethers.js**, **Prisma ORM**, and **PostgreSQL**. This app indexes `Transfer` events from an ERC20 contract and stores them in a database, with a searchable and paginated frontend UI.
 
-First, run the development server:
+---
 
-```bash
+## 🔧 Tech Stack
+
+- **Frontend:** Next.js (App Router), React, Tailwind CSS  
+- **Backend:** Ethers.js, Prisma ORM  
+- **Database:** PostgreSQL  
+- **Environment Management:** `.env`  
+
+---
+
+## 📦 Features
+
+- Fetch historical `Transfer` events using Ethers.js  
+- Store logs into PostgreSQL using Prisma  
+- Paginated API for retrieving logs  
+- Frontend UI to search logs by block range with pagination  
+
+---
+
+## 📁 Project Structure
+
+web3-indexer/
+├── prisma/
+│ └── schema.prisma # Prisma DB schema
+├── src/
+│ ├── app/
+│ │ ├── api/
+│ │ │ └── indexer/
+│ │ │ ├── route.js # Indexer logic (fetch + store)
+│ │ │ └── search/route.js # Search logs with pagination
+│ │ └── search/page.jsx # Search frontend UI
+│ └── lib/
+│ └── prisma.js (optional) # Prisma client init
+├── .env.local
+├── package.json
+└── README.md
+
+---
+
+## ⚙️ Environment Variables
+
+Create a `.env.local` file in the root:
+
+```env
+DATABASE_URL="postgresql://postgres:yourpassword@localhost:5432/eth_logs"
+RPC_URL="https://mainnet.infura.io/v3/YOUR_INFURA_KEY"
+CONTRACT_ADDRESS="0xYourERC20Address"
+
+🚀 Getting Started
+
+npm install
+
+Start PostgreSQL via Homebrew
+brew services start postgresql@14
+
+if you haven’t created the PostgreSQL role or DB:
+createuser postgres -s
+createdb eth_logs
+
+Run DB migration
+npx prisma migrate dev --name init
+
+
+Start Next.js dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🔍 API Endpoints
+GET /api/indexer
+Fetches Transfer logs from the configured Ethereum contract using Ethers.js
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Stores logs into PostgreSQL with deduplication (upsert)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Trigger this endpoint manually or via a cron job.
 
-## Learn More
+GET /api/indexer/search
+Query indexed transfer logs from the DB.
 
-To learn more about Next.js, take a look at the following resources:
+Query Parameters:
+Param	      Type	   Required	   Description
+fromBlock	  number	  ✅	     Starting block number
+toBlock	      number	  ✅	     Ending block number
+page	      number	  ❌	     Page number (default: 1)
+limit	      number	  ❌	     Items per page (default: 100)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Example:
+GET /api/indexer/search?fromBlock=19000000&toBlock=19000050&page=2&limit=5
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+💻 Frontend UI
+Visit /search route to:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Input block range (fromBlock, toBlock)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Submit search and fetch logs
+
+View paginated results
+
+UI is styled with Tailwind CSS.
+
+✅ To Do Next
+Add auto-syncing background job (e.g. cron + queue)
+
+Filter logs by from, to, or value
+
+Add debounce or real-time search
+
+Display charts (top addresses, volume)
+
+Export to CSV or Excel
+
