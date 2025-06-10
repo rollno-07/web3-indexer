@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function SearchPage() {
   const [fromBlock, setFromBlock] = useState("");
@@ -9,7 +9,7 @@ export default function SearchPage() {
   const [meta, setMeta] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchLogs = async (page = 1) => {
+  const fetchLogs = useCallback(async (page = 1) => {
     setLoading(true);
     const params = new URLSearchParams({
       fromBlock,
@@ -26,7 +26,7 @@ export default function SearchPage() {
       alert(json.error);
     }
     setLoading(false);
-  };
+  }, [fromBlock, toBlock]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -83,7 +83,7 @@ export default function SearchPage() {
                   {logs.map((log) => (
                     <tr key={log.txHash}>
                       <td className="border px-2 py-1">{log.block}</td>
-                      <td className="border px-2 py-1">{log.txHash.slice(0, 10)}...</td>
+                      <td className="border px-2 py-1">{log.txHash}</td>
                       <td className="border px-2 py-1">{log.from}</td>
                       <td className="border px-2 py-1">{log.to}</td>
                       <td className="border px-2 py-1">{log.value}</td>
