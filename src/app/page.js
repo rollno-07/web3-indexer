@@ -38,7 +38,7 @@ export default function SearchPage() {
     if (page !== 1) {
       fetchLogs(page);
     }
-  }, [page]);
+  }, [page, fetchLogs]);
 
   return (
     <div className="p-6">
