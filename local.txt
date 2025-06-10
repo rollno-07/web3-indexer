@@ -1,7 +1,0 @@
-# Ethereum & Infura
-NEXT_PUBLIC_RPC_URL=https://mainnet.infura.io/v3/dde5b64c0abf45fe8bf1157f6d1b76cd
-CONTRACT_ADDRESS=0xdAC17F958D2ee523a2206206994597C13D831ec7  # USDT (ERC20)
-START_BLOCK=19000000
-
-# PostgreSQL for Prisma
-#DATABASE_URL=postgresql://your_db_user:your_db_password@localhost:5432
